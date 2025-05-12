@@ -6,30 +6,25 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3FD70A052DD2587700C0FF55 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD709FB2DD2587700C0FF55 /* AppDelegate.swift */; };
+		3FD70A062DD2587700C0FF55 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD70A022DD2587700C0FF55 /* SceneDelegate.swift */; };
+		3FD70A072DD2587700C0FF55 /* WeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD70A032DD2587700C0FF55 /* WeatherViewController.swift */; };
+		3FD70A082DD2587700C0FF55 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3FD709FC2DD2587700C0FF55 /* Assets.xcassets */; };
+		3FD70A0A2DD2587700C0FF55 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3FD709FF2DD2587700C0FF55 /* LaunchScreen.storyboard */; };
+		3FD70A112DD25B7100C0FF55 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD70A102DD25B7100C0FF55 /* WeatherService.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		3FD709E32DD2586F00C0FF55 /* WeatherApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3FD709FB2DD2587700C0FF55 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		3FD709FC2DD2587700C0FF55 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3FD709FD2DD2587700C0FF55 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3FD709FE2DD2587700C0FF55 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		3FD70A022DD2587700C0FF55 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		3FD70A032DD2587700C0FF55 /* WeatherViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherViewController.swift; sourceTree = "<group>"; };
+		3FD70A102DD25B7100C0FF55 /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		3FD709F52DD2587100C0FF55 /* Exceptions for "WeatherApp" folder in "WeatherApp" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 3FD709E22DD2586F00C0FF55 /* WeatherApp */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		3FD709E52DD2586F00C0FF55 /* WeatherApp */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				3FD709F52DD2587100C0FF55 /* Exceptions for "WeatherApp" folder in "WeatherApp" target */,
-			);
-			path = WeatherApp;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		3FD709E02DD2586F00C0FF55 /* Frameworks */ = {
@@ -45,7 +40,7 @@
 		3FD709DA2DD2586F00C0FF55 = {
 			isa = PBXGroup;
 			children = (
-				3FD709E52DD2586F00C0FF55 /* WeatherApp */,
+				3FD70A042DD2587700C0FF55 /* WeatherApp */,
 				3FD709E42DD2586F00C0FF55 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -56,6 +51,52 @@
 				3FD709E32DD2586F00C0FF55 /* WeatherApp.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		3FD70A042DD2587700C0FF55 /* WeatherApp */ = {
+			isa = PBXGroup;
+			children = (
+				3FD70A0F2DD25B5300C0FF55 /* Services */,
+				3FD70A0C2DD258ED00C0FF55 /* App */,
+				3FD70A0D2DD258F600C0FF55 /* WeatherScreen */,
+				3FD70A0E2DD2591D00C0FF55 /* Resources */,
+				3FD709FD2DD2587700C0FF55 /* Info.plist */,
+			);
+			path = WeatherApp;
+			sourceTree = "<group>";
+		};
+		3FD70A0C2DD258ED00C0FF55 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				3FD709FB2DD2587700C0FF55 /* AppDelegate.swift */,
+				3FD70A022DD2587700C0FF55 /* SceneDelegate.swift */,
+				3FD709FF2DD2587700C0FF55 /* LaunchScreen.storyboard */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		3FD70A0D2DD258F600C0FF55 /* WeatherScreen */ = {
+			isa = PBXGroup;
+			children = (
+				3FD70A032DD2587700C0FF55 /* WeatherViewController.swift */,
+			);
+			path = WeatherScreen;
+			sourceTree = "<group>";
+		};
+		3FD70A0E2DD2591D00C0FF55 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				3FD709FC2DD2587700C0FF55 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		3FD70A0F2DD25B5300C0FF55 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				3FD70A102DD25B7100C0FF55 /* WeatherService.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -72,9 +113,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				3FD709E52DD2586F00C0FF55 /* WeatherApp */,
 			);
 			name = WeatherApp;
 			packageProductDependencies = (
@@ -122,6 +160,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3FD70A082DD2587700C0FF55 /* Assets.xcassets in Resources */,
+				3FD70A0A2DD2587700C0FF55 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,10 +172,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3FD70A112DD25B7100C0FF55 /* WeatherService.swift in Sources */,
+				3FD70A052DD2587700C0FF55 /* AppDelegate.swift in Sources */,
+				3FD70A062DD2587700C0FF55 /* SceneDelegate.swift in Sources */,
+				3FD70A072DD2587700C0FF55 /* WeatherViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		3FD709FF2DD2587700C0FF55 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3FD709FE2DD2587700C0FF55 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		3FD709F72DD2587100C0FF55 /* Debug */ = {
@@ -150,9 +205,9 @@
 				INFOPLIST_FILE = WeatherApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -160,9 +215,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dmaximov.practicum.WeatherApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -178,9 +237,9 @@
 				INFOPLIST_FILE = WeatherApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -188,9 +247,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dmaximov.practicum.WeatherApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -247,7 +310,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -305,7 +368,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
