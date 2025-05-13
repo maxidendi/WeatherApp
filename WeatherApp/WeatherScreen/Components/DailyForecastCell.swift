@@ -12,12 +12,6 @@ final class DailyForecastCell: UITableViewCell {
     // MARK: - Properties
     
     static let identifier = "DailyForecastCell"
-    private let stackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.alignment = .fill
-        return stackView
-    } ()
 
     private lazy var dayLabel: UILabel = {
         let label = UILabel()
@@ -28,7 +22,7 @@ final class DailyForecastCell: UITableViewCell {
     
     private lazy var rangeLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12)
+        label.font = .systemFont(ofSize: 14, weight: .medium)
         label.textColor = .label
         return label
     } ()
@@ -52,25 +46,30 @@ final class DailyForecastCell: UITableViewCell {
     
     // MARK: - Methods
 
-    func configure(with forecast: ForecastDay) {
-        dayLabel.text = String(forecast.date.suffix(5))
+    func configure(with forecast: ForecastDay?) {
+        guard let forecast else { return }
+        dayLabel.text = String.formatDateString(forecast.date)
         rangeLabel.text = "\(forecast.day.mintemp_c)° / \(forecast.day.maxtemp_c)°"
         loadIcon(from: forecast.day.condition.icon)
     }
     
     private func setupUI() {
+        backgroundColor = .clear
         [dayLabel, iconImageView, rangeLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
-            stackView.addArrangedSubview($0)
+            addSubview($0)
         }
-        contentView.addSubview(stackView)
-        stackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            stackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            stackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            dayLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            dayLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
             
+            iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            iconImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
             iconImageView.widthAnchor.constraint(equalToConstant: 40),
-            iconImageView.heightAnchor.constraint(equalToConstant: 40)
+            iconImageView.heightAnchor.constraint(equalToConstant: 40),
+            
+            rangeLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            rangeLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24)
         ])
     }
 

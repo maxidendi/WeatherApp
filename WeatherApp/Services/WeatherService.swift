@@ -8,12 +8,14 @@
 import Foundation
 
 final class WeatherService {
+    
     static let shared = WeatherService()
-    private let apiKey = "9fae8be7cde3432586c102048251305"
+    
+    private init() {}
 
     func fetchWeather(lat: Double, lon: Double, completion: @escaping (Result<WeatherResponse, Error>) -> Void) {
         let location = "\(lat),\(lon)"
-        let urlString = "http://api.weatherapi.com/v1/forecast.json?key=\(apiKey)&q=\(location)&days=7"
+        let urlString = "\(Constants.baseURLString)/forecast.json?key=\(Constants.apiKey)&q=\(location)&days=7"
 
         guard let url = URL(string: urlString) else {
             completion(.failure(NSError(domain: "Invalid URL", code: 1)))

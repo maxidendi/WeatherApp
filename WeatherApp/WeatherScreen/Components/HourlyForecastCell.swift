@@ -53,7 +53,8 @@ final class HourlyForecastCell: UICollectionViewCell {
     
     // MARK: - Methods
 
-    func configure(with hour: HourForecast) {
+    func configure(with hour: HourForecast?) {
+        guard let hour else { return }
         timeLabel.text = String(hour.time.split(separator: " ").last ?? "")
         tempLabel.text = "\(hour.temp_c)℃"
         loadIcon(from: hour.condition.icon)
@@ -69,6 +70,7 @@ final class HourlyForecastCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             stackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
             iconImageView.widthAnchor.constraint(equalToConstant: 40),
             iconImageView.heightAnchor.constraint(equalToConstant: 40)
         ])
