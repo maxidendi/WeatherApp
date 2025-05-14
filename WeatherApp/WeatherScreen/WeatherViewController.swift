@@ -6,27 +6,29 @@
 //
 
 import UIKit
-import CoreLocation
+
+enum WeatherViewConstants {
+    static let forecastDaysCount: Int = 7
+    static let forecastDayCellHeight: CGFloat = 50
+    static let forecastHourCellHeight: CGFloat = 100
+    static let forecastHourCellWidth: CGFloat = 60
+    static let hourlyCollectionViewHeight: CGFloat = 120
+    static let paddingS: CGFloat = 16
+    static let paddingM: CGFloat = 24
+    static let paddingL: CGFloat = 32
+    static let horizontalInsetsS: UIEdgeInsets = .init(top: 0, left: 16, bottom: 0, right: 16)
+}
 
 final class WeatherViewController: UIViewController {
     
     // MARK: - Properties
-    
-    private var weatherData: WeatherResponse? {
-        didSet {
-            updateUI()
-        }
-    }
-    private var forecastDaily: [ForecastDay] {
-        guard let weatherData else { return [] }
-        return weatherData.forecast.forecastday
-    }
-    private var hourlyForecast: [HourForecast] {
-        guard let weatherData else { return [] }
-        let hours = weatherData.forecast.forecastday.flatMap { $0.hour }
-        return hours.filter { String.isDateInRange($0.time) }
-    }
-    private let locationManager = CLLocationManager()
+
+    private let viewModel: WeatherViewModel
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.hidesWhenStopped = true
+        return activityIndicator
+    } ()
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -39,6 +41,7 @@ final class WeatherViewController: UIViewController {
     
     private lazy var contentView: UIView = {
         let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .clear
         return view
     } ()
@@ -65,7 +68,7 @@ final class WeatherViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 16
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        layout.sectionInset = WeatherViewConstants.horizontalInsetsS
 
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -82,40 +85,46 @@ final class WeatherViewController: UIViewController {
         tableView.allowsSelection = false
         tableView.backgroundColor = .systemGray.withAlphaComponent(0.5)
         tableView.layer.cornerRadius = 8
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        tableView.separatorInset = WeatherViewConstants.horizontalInsetsS
         return tableView
     }()
-
-    private let activityIndicator = UIActivityIndicatorView(style: .large)
+    
+    // MARK: - Init
+    
+    init(viewModel: WeatherViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     // MARK: - Methods of lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        bind()
         setupUI()
-        checkLocationAuthorization()
+        viewModel.checkLocationAuthorization()
     }
 
     // MARK: - Methods
-    
-    private func checkLocationAuthorization() {
-        let status = locationManager.authorizationStatus
-        switch status {
-        case .notDetermined:
-            locationManager.requestWhenInUseAuthorization()
-        case .authorizedWhenInUse, .authorizedAlways:
-            locationManager.startUpdatingLocation()
-        case .denied, .restricted:
-            fetchWeather()
-        @unknown default:
-            break
+
+    private func bind() {
+        viewModel.onUpdateUI = { [weak self] data in
+            self?.updateUI(with: data)
+        }
+        viewModel.onShowFetchError = { [weak self] in
+            self?.showFetchErrorAlert()
+        }
+        viewModel.onShowIndicator = { [weak self] shouldShow in
+            self?.shouldShowIndicator(shouldShow)
         }
     }
     
-    private func showErrorAlert() {
+    private func showFetchErrorAlert() {
         let alert = UIAlertController(
             title: "Ошибка загрузки",
             message: nil,
@@ -124,29 +133,36 @@ final class WeatherViewController: UIViewController {
             title: "Повторить",
             style: .default
         ) { [weak self] _ in
-            guard let self, let coordinates = self.locationManager.location?.coordinate else { return }
-            fetchWeather(
-                lat: coordinates.latitude,
-                lon: coordinates.longitude)
+            self?.viewModel.checkLocationAuthorization()
         })
         alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
         present(alert, animated: true)
     }
     
+    private func shouldShowIndicator(_ shouldShow: Bool) {
+        scrollView.isHidden = shouldShow
+        shouldShow ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
+        view.isUserInteractionEnabled = !shouldShow
+    }
+    
     private func setupUI() {
         setupScrollView()
         setupHeader()
-        setupCollectionView()
-        setupTableView()
+        setupHourlyCollectionView()
+        setupDailyTableView()
     }
     
     private func setupScrollView() {
-        [scrollView, contentView].forEach {
+        [scrollView, activityIndicator].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview($0)
         }
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -167,63 +183,48 @@ final class WeatherViewController: UIViewController {
         }
         NSLayoutConstraint.activate([
             locationLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            locationLabel.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 32),
+            locationLabel.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: WeatherViewConstants.paddingL),
             
             tempLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            tempLabel.topAnchor.constraint(equalTo: locationLabel.bottomAnchor, constant: 16),
+            tempLabel.topAnchor.constraint(equalTo: locationLabel.bottomAnchor, constant: WeatherViewConstants.paddingS),
             
             conditionLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            conditionLabel.topAnchor.constraint(equalTo: tempLabel.bottomAnchor, constant: 16),
+            conditionLabel.topAnchor.constraint(equalTo: tempLabel.bottomAnchor, constant: WeatherViewConstants.paddingS),
         ])
     }
     
-    private func setupCollectionView() {
+    private func setupHourlyCollectionView() {
         hourlyCollectionView.dataSource = self
         hourlyCollectionView.delegate = self
         hourlyCollectionView.register(HourlyForecastCell.self, forCellWithReuseIdentifier: HourlyForecastCell.identifier)
         contentView.addSubview(hourlyCollectionView)
         NSLayoutConstraint.activate([
-            hourlyCollectionView.topAnchor.constraint(equalTo: conditionLabel.bottomAnchor, constant: 16),
-            hourlyCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
-            hourlyCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
-            hourlyCollectionView.heightAnchor.constraint(equalToConstant: 120)
+            hourlyCollectionView.topAnchor.constraint(equalTo: conditionLabel.bottomAnchor, constant: WeatherViewConstants.paddingS),
+            hourlyCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: WeatherViewConstants.paddingM),
+            hourlyCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -WeatherViewConstants.paddingM),
+            hourlyCollectionView.heightAnchor.constraint(equalToConstant: WeatherViewConstants.hourlyCollectionViewHeight)
         ])
     }
 
-    private func setupTableView() {
+    private func setupDailyTableView() {
         dailyTableView.dataSource = self
         dailyTableView.delegate = self
         dailyTableView.register(DailyForecastCell.self, forCellReuseIdentifier: DailyForecastCell.identifier)
         contentView.addSubview(dailyTableView)
         NSLayoutConstraint.activate([
-            dailyTableView.topAnchor.constraint(equalTo: hourlyCollectionView.bottomAnchor, constant: 16),
-            dailyTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
-            dailyTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
+            dailyTableView.topAnchor.constraint(equalTo: hourlyCollectionView.bottomAnchor, constant: WeatherViewConstants.paddingL),
+            dailyTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: WeatherViewConstants.paddingM),
+            dailyTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -WeatherViewConstants.paddingM),
             dailyTableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            dailyTableView.heightAnchor.constraint(equalToConstant: 350)
+            dailyTableView.heightAnchor.constraint(
+                equalToConstant: WeatherViewConstants.forecastDayCellHeight * CGFloat(WeatherViewConstants.forecastDaysCount))
         ])
     }
 
-    private func fetchWeather(lat: Double = 55.752, lon: Double = 37.616) {
-        activityIndicator.startAnimating()
-
-        WeatherService.shared.fetchWeather(lat: lat, lon: lon) { [weak self] result in
-            DispatchQueue.main.async {
-                self?.activityIndicator.stopAnimating()
-                switch result {
-                case .success(let data):
-                    self?.weatherData = data
-                case .failure:
-                    self?.showErrorAlert()
-                }
-            }
-        }
-    }
-
-    private func updateUI() {
-        locationLabel.text = weatherData?.location.name
-        tempLabel.text = "\(weatherData?.current.temp_c ?? 0)℃"
-        conditionLabel.text = weatherData?.current.condition.text
+    private func updateUI(with weatherData: WeatherResponse ) {
+        locationLabel.text = weatherData.location.name
+        tempLabel.text = "\(weatherData.current.temp_c)℃"
+        conditionLabel.text = weatherData.current.condition.text
         hourlyCollectionView.reloadData()
         dailyTableView.reloadData()
     }
@@ -231,29 +232,10 @@ final class WeatherViewController: UIViewController {
 
 // MARK: - Extensions
 
-extension WeatherViewController: CLLocationManagerDelegate {
-    
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations location: [CLLocation]) {
-        guard let locValue = location.last else {
-            return fetchWeather()
-        }
-        fetchWeather(lat: locValue.coordinate.latitude, lon: locValue.coordinate.longitude)
-        manager.stopUpdatingLocation()
-    }
-    
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("Error updating location: \(error.localizedDescription)")
-    }
-    
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        checkLocationAuthorization()
-    }
-}
-
 extension WeatherViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return hourlyForecast.count
+        return viewModel.getHourlyForecast().count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -261,20 +243,23 @@ extension WeatherViewController: UICollectionViewDataSource, UICollectionViewDel
             withReuseIdentifier: "HourlyForecastCell",
             for: indexPath) as? HourlyForecastCell
         else { return UICollectionViewCell() }
-        cell.configure(with: hourlyForecast[safe: indexPath.row])
+        cell.configure(with: viewModel.getHourlyForecast()[safe: indexPath.row])
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 60, height: 100)
+        return CGSize(
+            width: WeatherViewConstants.forecastHourCellWidth,
+            height: WeatherViewConstants.forecastHourCellHeight
+        )
     }
 }
 
 extension WeatherViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 7
+        return WeatherViewConstants.forecastDaysCount
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -282,11 +267,11 @@ extension WeatherViewController: UITableViewDataSource, UITableViewDelegate {
             withIdentifier: "DailyForecastCell",
             for: indexPath) as? DailyForecastCell
         else { return UITableViewCell() }
-        cell.configure(with: forecastDaily[safe: indexPath.row])
+        cell.configure(with: viewModel.getDailyForecast()[safe: indexPath.row])
         return cell
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50
+        return WeatherViewConstants.forecastDayCellHeight
     }
 }

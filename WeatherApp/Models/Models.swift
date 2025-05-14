@@ -23,10 +23,10 @@ struct Current: Codable {
 }
 
 struct Forecast: Codable {
-    let forecastday: [ForecastDay]
+    let forecastday: [DayForecast]
 }
 
-struct ForecastDay: Codable {
+struct DayForecast: Codable {
     let date: String
     let day: Day
     let hour: [HourForecast]

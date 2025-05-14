@@ -19,6 +19,8 @@
 		3FD70A1E2DD3A88B00C0FF55 /* Array+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD70A1D2DD3A88B00C0FF55 /* Array+Extension.swift */; };
 		3FD70A202DD3C52300C0FF55 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD70A1F2DD3C52300C0FF55 /* Constants.swift */; };
 		3FD70A222DD3C63700C0FF55 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD70A212DD3C63700C0FF55 /* String+Extension.swift */; };
+		3FD70A242DD47CF400C0FF55 /* WeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD70A232DD47CF400C0FF55 /* WeatherViewModel.swift */; };
+		3FD70A272DD4917500C0FF55 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 3FD70A262DD4917500C0FF55 /* Kingfisher */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,7 @@
 		3FD70A1D2DD3A88B00C0FF55 /* Array+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Extension.swift"; sourceTree = "<group>"; };
 		3FD70A1F2DD3C52300C0FF55 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		3FD70A212DD3C63700C0FF55 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
+		3FD70A232DD47CF400C0FF55 /* WeatherViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +46,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3FD70A272DD4917500C0FF55 /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,6 +98,7 @@
 			children = (
 				3FD70A152DD2674B00C0FF55 /* Components */,
 				3FD70A032DD2587700C0FF55 /* WeatherViewController.swift */,
+				3FD70A232DD47CF400C0FF55 /* WeatherViewModel.swift */,
 			);
 			path = WeatherScreen;
 			sourceTree = "<group>";
@@ -158,6 +163,7 @@
 			);
 			name = WeatherApp;
 			packageProductDependencies = (
+				3FD70A262DD4917500C0FF55 /* Kingfisher */,
 			);
 			productName = WeatherApp;
 			productReference = 3FD709E32DD2586F00C0FF55 /* WeatherApp.app */;
@@ -187,6 +193,9 @@
 			);
 			mainGroup = 3FD709DA2DD2586F00C0FF55;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				3FD70A252DD4917500C0FF55 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3FD709E42DD2586F00C0FF55 /* Products */;
 			projectDirPath = "";
@@ -217,6 +226,7 @@
 				3FD70A112DD25B7100C0FF55 /* WeatherService.swift in Sources */,
 				3FD70A052DD2587700C0FF55 /* AppDelegate.swift in Sources */,
 				3FD70A222DD3C63700C0FF55 /* String+Extension.swift in Sources */,
+				3FD70A242DD47CF400C0FF55 /* WeatherViewModel.swift in Sources */,
 				3FD70A062DD2587700C0FF55 /* SceneDelegate.swift in Sources */,
 				3FD70A072DD2587700C0FF55 /* WeatherViewController.swift in Sources */,
 				3FD70A1B2DD267C500C0FF55 /* DailyForecastCell.swift in Sources */,
@@ -448,6 +458,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3FD70A252DD4917500C0FF55 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.3.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3FD70A262DD4917500C0FF55 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3FD70A252DD4917500C0FF55 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3FD709DB2DD2586F00C0FF55 /* Project object */;
 }

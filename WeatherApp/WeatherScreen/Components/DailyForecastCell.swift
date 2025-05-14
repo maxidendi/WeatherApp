@@ -46,7 +46,7 @@ final class DailyForecastCell: UITableViewCell {
     
     // MARK: - Methods
 
-    func configure(with forecast: ForecastDay?) {
+    func configure(with forecast: DayForecast?) {
         guard let forecast else { return }
         dayLabel.text = String.formatDateString(forecast.date)
         rangeLabel.text = "\(forecast.day.mintemp_c)° / \(forecast.day.maxtemp_c)°"
