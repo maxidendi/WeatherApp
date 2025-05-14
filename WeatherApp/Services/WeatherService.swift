@@ -7,11 +7,11 @@
 
 import Foundation
 
-final class WeatherService {
-    
-    static let shared = WeatherService()
-    
-    private init() {}
+protocol WeatherServiceProtocol {
+    func fetchWeather(lat: Double, long: Double, completion: @escaping (Result<WeatherResponse, Error>) -> Void)
+}
+
+final class WeatherService: WeatherServiceProtocol {
 
     func fetchWeather(lat: Double, long: Double, completion: @escaping (Result<WeatherResponse, Error>) -> Void) {
         let fulfillCompletionOnMainThread: (Result<WeatherResponse, Error>) -> Void = { result in

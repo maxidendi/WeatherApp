@@ -27,7 +27,6 @@ final class WeatherViewController: UIViewController {
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.refreshControl = refreshControl
-        scrollView.isHidden = true
         scrollView.backgroundColor = .clear
         scrollView.alwaysBounceVertical = true
         scrollView.showsVerticalScrollIndicator = false
@@ -37,6 +36,7 @@ final class WeatherViewController: UIViewController {
     
     private lazy var contentView: UIView = {
         let view = UIView()
+        view.isHidden = true
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .clear
         return view
@@ -141,9 +141,13 @@ final class WeatherViewController: UIViewController {
     }
     
     private func shouldShowIndicator(_ shouldShow: Bool) {
-        scrollView.isHidden = shouldShow
-        shouldShow ? activityIndicator.startAnimating() : activityIndicator.stopAnimating()
         view.isUserInteractionEnabled = !shouldShow
+        contentView.isHidden = shouldShow
+        contentView.alpha = shouldShow ? 1 : 0
+        UIView.animate(withDuration: 0.8) {
+            self.contentView.alpha = shouldShow ? 0 : 1
+            shouldShow ? self.activityIndicator.startAnimating() : self.activityIndicator.stopAnimating()
+        }
     }
     
     private func setupUI() {

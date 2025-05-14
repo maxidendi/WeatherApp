@@ -42,10 +42,12 @@ final class WeatherViewModel: NSObject, WeatherViewModelProtocol {
         return hours.filter { String.isDateInRange($0.time) }
     }
     private let locationManager = CLLocationManager()
+    private var weatherService: WeatherServiceProtocol
     
     // MARK: - Init
     
-    override init() {
+    init(weatherService: WeatherServiceProtocol) {
+        self.weatherService = weatherService
         super.init()
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.delegate = self
@@ -80,7 +82,7 @@ final class WeatherViewModel: NSObject, WeatherViewModelProtocol {
         long: Double = Constants.defaultCityCoordinates.long
     ) {
         onShowIndicator?(true)
-        WeatherService.shared.fetchWeather(lat: lat, long: long) { [weak self] result in
+        weatherService.fetchWeather(lat: lat, long: long) { [weak self] result in
             self?.onShowIndicator?(false)
             switch result {
             case .success(let data):
