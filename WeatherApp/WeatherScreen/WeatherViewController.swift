@@ -12,6 +12,12 @@ final class WeatherViewController: UIViewController {
     // MARK: - Properties
 
     private let viewModel: WeatherViewModel
+    private lazy var headerView: HeaderView = {
+        let headerView = HeaderView()
+        headerView.translatesAutoresizingMaskIntoConstraints = false
+        return headerView
+    } ()
+    
     private lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
@@ -36,31 +42,14 @@ final class WeatherViewController: UIViewController {
     
     private lazy var contentView: UIView = {
         let view = UIView()
-        view.isHidden = true
+        view.alpha = 0
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .clear
         return view
     } ()
     
-    private lazy var locationLabel: UILabel = {
-        let label = UILabel()
-        label.font = .boldSystemFont(ofSize: 24)
-        return label
-    } ()
     
-    private lazy var tempLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 48, weight: .semibold)
-        return label
-    } ()
-    
-    private lazy var conditionLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 18)
-        return label
-    } ()
-    
-    private let hourlyCollectionView: UICollectionView = {
+    private lazy var hourlyCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 16
@@ -74,7 +63,7 @@ final class WeatherViewController: UIViewController {
         return collectionView
     }()
 
-    private let dailyTableView: UITableView = {
+    private lazy var dailyTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.isScrollEnabled = false
@@ -142,8 +131,6 @@ final class WeatherViewController: UIViewController {
     
     private func shouldShowIndicator(_ shouldShow: Bool) {
         view.isUserInteractionEnabled = !shouldShow
-        contentView.isHidden = shouldShow
-        contentView.alpha = shouldShow ? 1 : 0
         UIView.animate(withDuration: 0.8) {
             self.contentView.alpha = shouldShow ? 0 : 1
             shouldShow ? self.activityIndicator.startAnimating() : self.activityIndicator.stopAnimating()
@@ -182,19 +169,11 @@ final class WeatherViewController: UIViewController {
     }
     
     private func setupHeader() {
-        [locationLabel, tempLabel, conditionLabel].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview($0)
-        }
+        contentView.addSubview(headerView)
         NSLayoutConstraint.activate([
-            locationLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            locationLabel.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: Constants.paddingL * 2),
-            
-            tempLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            tempLabel.topAnchor.constraint(equalTo: locationLabel.bottomAnchor, constant: Constants.paddingS),
-            
-            conditionLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            conditionLabel.topAnchor.constraint(equalTo: tempLabel.bottomAnchor, constant: Constants.paddingS),
+            headerView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            headerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            headerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         ])
     }
     
@@ -204,7 +183,7 @@ final class WeatherViewController: UIViewController {
         hourlyCollectionView.register(HourlyForecastCell.self, forCellWithReuseIdentifier: HourlyForecastCell.identifier)
         contentView.addSubview(hourlyCollectionView)
         NSLayoutConstraint.activate([
-            hourlyCollectionView.topAnchor.constraint(equalTo: conditionLabel.bottomAnchor, constant: Constants.paddingS * 2),
+            hourlyCollectionView.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: Constants.paddingS * 2),
             hourlyCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.paddingM),
             hourlyCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.paddingM),
             hourlyCollectionView.heightAnchor.constraint(equalToConstant: Constants.hourlyCollectionViewHeight)
@@ -227,9 +206,7 @@ final class WeatherViewController: UIViewController {
     }
 
     private func updateUI(with weatherData: WeatherResponse ) {
-        locationLabel.text = weatherData.location.name
-        tempLabel.text = "\(weatherData.current.temp_c)℃"
-        conditionLabel.text = weatherData.current.condition.text
+        headerView.configure(with: weatherData)
         hourlyCollectionView.reloadData()
         dailyTableView.reloadData()
     }
