@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class DailyForecastCell: UITableViewCell {
     
@@ -45,6 +46,14 @@ final class DailyForecastCell: UITableViewCell {
     }
     
     // MARK: - Methods
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        iconImageView.kf.cancelDownloadTask()
+        dayLabel.text = nil
+        rangeLabel.text = nil
+        iconImageView.image = nil
+    }
 
     func configure(with forecast: DayForecast?) {
         guard let forecast else { return }
@@ -75,12 +84,7 @@ final class DailyForecastCell: UITableViewCell {
 
     private func loadIcon(from path: String) {
         guard let url = URL(string: "https:\(path)") else { return }
-        URLSession.shared.dataTask(with: url) { data, _, _ in
-            if let data = data {
-                DispatchQueue.main.async {
-                    self.iconImageView.image = UIImage(data: data)
-                }
-            }
-        }.resume()
+        iconImageView.kf.indicatorType = .activity
+        iconImageView.kf.setImage(with: url)
     }
 }

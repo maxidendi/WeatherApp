@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class HourlyForecastCell: UICollectionViewCell {
     
@@ -52,6 +53,14 @@ final class HourlyForecastCell: UICollectionViewCell {
     }
     
     // MARK: - Methods
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        iconImageView.kf.cancelDownloadTask()
+        timeLabel.text = nil
+        tempLabel.text = nil
+        iconImageView.image = nil
+    }
 
     func configure(with hour: HourForecast?) {
         guard let hour else { return }
@@ -78,12 +87,7 @@ final class HourlyForecastCell: UICollectionViewCell {
 
     private func loadIcon(from path: String) {
         guard let url = URL(string: "https:\(path)") else { return }
-        URLSession.shared.dataTask(with: url) { data, _, _ in
-            if let data = data {
-                DispatchQueue.main.async {
-                    self.iconImageView.image = UIImage(data: data)
-                }
-            }
-        }.resume()
+        iconImageView.kf.indicatorType = .activity
+        iconImageView.kf.setImage(with: url)
     }
 }
