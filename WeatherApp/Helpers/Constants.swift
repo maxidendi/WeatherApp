@@ -11,6 +11,7 @@ enum Constants {
     static let apiKey = "9fae8be7cde3432586c102048251305"
     static let baseURLString = "http://api.weatherapi.com/v1"
     static let dateFormatter = DateFormatter()
+    static let defaultCityCoordinates: (lat: Double, long: Double) = (55.752, 37.616)
     
     static let forecastDaysCount: Int = 7
     static let forecastDayCellHeight: CGFloat = 50

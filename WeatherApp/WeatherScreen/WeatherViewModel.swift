@@ -75,17 +75,18 @@ final class WeatherViewModel: NSObject, WeatherViewModelProtocol {
         }
     }
 
-    private func fetchWeather(lat: Double = 55.752, lon: Double = 37.616) {
+    private func fetchWeather(
+        lat: Double = Constants.defaultCityCoordinates.lat,
+        long: Double = Constants.defaultCityCoordinates.long
+    ) {
         onShowIndicator?(true)
-        WeatherService.shared.fetchWeather(lat: lat, lon: lon) { [weak self] result in
-            DispatchQueue.main.async {
-                self?.onShowIndicator?(false)
-                switch result {
-                case .success(let data):
-                    self?.weatherData = data
-                case .failure:
-                    self?.onShowFetchError?()
-                }
+        WeatherService.shared.fetchWeather(lat: lat, long: long) { [weak self] result in
+            self?.onShowIndicator?(false)
+            switch result {
+            case .success(let data):
+                self?.weatherData = data
+            case .failure:
+                self?.onShowFetchError?()
             }
         }
     }
@@ -99,7 +100,7 @@ extension WeatherViewModel: CLLocationManagerDelegate {
         guard let locValue = location.last else {
             return fetchWeather()
         }
-        fetchWeather(lat: locValue.coordinate.latitude, lon: locValue.coordinate.longitude)
+        fetchWeather(lat: locValue.coordinate.latitude, long: locValue.coordinate.longitude)
         manager.stopUpdatingLocation()
     }
     

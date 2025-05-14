@@ -13,38 +13,47 @@ final class WeatherService {
     
     private init() {}
 
-    func fetchWeather(lat: Double, lon: Double, completion: @escaping (Result<WeatherResponse, Error>) -> Void) {
-        var urlComponents = URLComponents(
-            string: Constants.baseURLString + "/forecast.json"
-        )
-        urlComponents?.queryItems = [
-            URLQueryItem(name: "key", value: Constants.apiKey),
-            URLQueryItem(name: "q", value: "\(lat),\(lon)"),
-            URLQueryItem(name: "days", value: String(Constants.forecastDaysCount)),
-            URLQueryItem(name: "lang", value: "ru"),
-        ]
-        guard let url = urlComponents?.url else {
-            completion(.failure(NSError(domain: "Invalid URL", code: 1)))
+    func fetchWeather(lat: Double, long: Double, completion: @escaping (Result<WeatherResponse, Error>) -> Void) {
+        let fulfillCompletionOnMainThread: (Result<WeatherResponse, Error>) -> Void = { result in
+            DispatchQueue.main.async{
+                completion(result)
+            }
+        }
+        guard let url = getWeatherUrl(lat: lat, long: long) else {
+            fulfillCompletionOnMainThread(.failure(NSError(domain: "Invalid URL", code: 1)))
             return
         }
 
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            if let error {
+                fulfillCompletionOnMainThread(.failure(error))
                 return
             }
 
-            guard let data = data else {
-                completion(.failure(NSError(domain: "No data", code: 2)))
+            guard let data else {
+                fulfillCompletionOnMainThread(.failure(NSError(domain: "No data", code: 2)))
                 return
             }
 
             do {
                 let weather = try JSONDecoder().decode(WeatherResponse.self, from: data)
-                completion(.success(weather))
+                fulfillCompletionOnMainThread(.success(weather))
             } catch {
-                completion(.failure(error))
+                fulfillCompletionOnMainThread(.failure(error))
             }
         }.resume()
+    }
+    
+    private func getWeatherUrl(lat: Double, long: Double) -> URL? {
+        var urlComponents = URLComponents(
+            string: Constants.baseURLString + "/forecast.json"
+        )
+        urlComponents?.queryItems = [
+            URLQueryItem(name: "key", value: Constants.apiKey),
+            URLQueryItem(name: "q", value: "\(lat),\(long)"),
+            URLQueryItem(name: "days", value: String(Constants.forecastDaysCount)),
+            URLQueryItem(name: "lang", value: "ru"),
+        ]
+        return urlComponents?.url
     }
 }

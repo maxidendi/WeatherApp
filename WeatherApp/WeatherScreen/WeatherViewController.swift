@@ -12,6 +12,12 @@ final class WeatherViewController: UIViewController {
     // MARK: - Properties
 
     private let viewModel: WeatherViewModel
+    private lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        return refreshControl
+    } ()
+    
     private lazy var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView(style: .large)
         activityIndicator.hidesWhenStopped = true
@@ -20,6 +26,8 @@ final class WeatherViewController: UIViewController {
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
+        scrollView.refreshControl = refreshControl
+        scrollView.isHidden = true
         scrollView.backgroundColor = .clear
         scrollView.alwaysBounceVertical = true
         scrollView.showsVerticalScrollIndicator = false
@@ -112,6 +120,11 @@ final class WeatherViewController: UIViewController {
         }
     }
     
+    @objc private func refreshData() {
+        refreshControl.endRefreshing()
+        viewModel.checkLocationAuthorization()
+    }
+    
     private func showFetchErrorAlert() {
         let alert = UIAlertController(
             title: "Ошибка загрузки",
@@ -171,7 +184,7 @@ final class WeatherViewController: UIViewController {
         }
         NSLayoutConstraint.activate([
             locationLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            locationLabel.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: Constants.paddingL),
+            locationLabel.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: Constants.paddingL * 2),
             
             tempLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             tempLabel.topAnchor.constraint(equalTo: locationLabel.bottomAnchor, constant: Constants.paddingS),
@@ -187,7 +200,7 @@ final class WeatherViewController: UIViewController {
         hourlyCollectionView.register(HourlyForecastCell.self, forCellWithReuseIdentifier: HourlyForecastCell.identifier)
         contentView.addSubview(hourlyCollectionView)
         NSLayoutConstraint.activate([
-            hourlyCollectionView.topAnchor.constraint(equalTo: conditionLabel.bottomAnchor, constant: Constants.paddingS),
+            hourlyCollectionView.topAnchor.constraint(equalTo: conditionLabel.bottomAnchor, constant: Constants.paddingS * 2),
             hourlyCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.paddingM),
             hourlyCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.paddingM),
             hourlyCollectionView.heightAnchor.constraint(equalToConstant: Constants.hourlyCollectionViewHeight)
@@ -200,7 +213,7 @@ final class WeatherViewController: UIViewController {
         dailyTableView.register(DailyForecastCell.self, forCellReuseIdentifier: DailyForecastCell.identifier)
         contentView.addSubview(dailyTableView)
         NSLayoutConstraint.activate([
-            dailyTableView.topAnchor.constraint(equalTo: hourlyCollectionView.bottomAnchor, constant: Constants.paddingL),
+            dailyTableView.topAnchor.constraint(equalTo: hourlyCollectionView.bottomAnchor, constant: Constants.paddingS),
             dailyTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.paddingM),
             dailyTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.paddingM),
             dailyTableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
