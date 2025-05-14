@@ -23,7 +23,8 @@ final class WeatherViewController: UIViewController {
     }
     private var hourlyForecast: [HourForecast] {
         guard let weatherData else { return [] }
-        return weatherData.forecast.forecastday.flatMap { $0.hour }
+        let hours = weatherData.forecast.forecastday.flatMap { $0.hour }
+        return hours.filter { String.isDateInRange($0.time) }
     }
     private let locationManager = CLLocationManager()
     
@@ -179,7 +180,7 @@ final class WeatherViewController: UIViewController {
     private func setupCollectionView() {
         hourlyCollectionView.dataSource = self
         hourlyCollectionView.delegate = self
-        hourlyCollectionView.register(HourlyForecastCell.self, forCellWithReuseIdentifier: "HourlyForecastCell")
+        hourlyCollectionView.register(HourlyForecastCell.self, forCellWithReuseIdentifier: HourlyForecastCell.identifier)
         contentView.addSubview(hourlyCollectionView)
         NSLayoutConstraint.activate([
             hourlyCollectionView.topAnchor.constraint(equalTo: conditionLabel.bottomAnchor, constant: 16),
@@ -192,7 +193,7 @@ final class WeatherViewController: UIViewController {
     private func setupTableView() {
         dailyTableView.dataSource = self
         dailyTableView.delegate = self
-        dailyTableView.register(DailyForecastCell.self, forCellReuseIdentifier: "DailyForecastCell")
+        dailyTableView.register(DailyForecastCell.self, forCellReuseIdentifier: DailyForecastCell.identifier)
         contentView.addSubview(dailyTableView)
         NSLayoutConstraint.activate([
             dailyTableView.topAnchor.constraint(equalTo: hourlyCollectionView.bottomAnchor, constant: 16),
@@ -252,7 +253,7 @@ extension WeatherViewController: CLLocationManagerDelegate {
 extension WeatherViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 24
+        return hourlyForecast.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

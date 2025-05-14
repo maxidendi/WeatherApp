@@ -68,8 +68,8 @@
 		3FD70A042DD2587700C0FF55 /* WeatherApp */ = {
 			isa = PBXGroup;
 			children = (
-				3FD70A1C2DD3A87900C0FF55 /* Helpers */,
 				3FD70A0C2DD258ED00C0FF55 /* App */,
+				3FD70A1C2DD3A87900C0FF55 /* Helpers */,
 				3FD70A122DD266D300C0FF55 /* Models */,
 				3FD70A0F2DD25B5300C0FF55 /* Services */,
 				3FD70A0D2DD258F600C0FF55 /* WeatherScreen */,
