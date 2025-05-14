@@ -14,10 +14,16 @@ final class WeatherService {
     private init() {}
 
     func fetchWeather(lat: Double, lon: Double, completion: @escaping (Result<WeatherResponse, Error>) -> Void) {
-        let location = "\(lat),\(lon)"
-        let urlString = "\(Constants.baseURLString)/forecast.json?key=\(Constants.apiKey)&q=\(location)&days=7"
-
-        guard let url = URL(string: urlString) else {
+        var urlComponents = URLComponents(
+            string: Constants.baseURLString + "/forecast.json"
+        )
+        urlComponents?.queryItems = [
+            URLQueryItem(name: "key", value: Constants.apiKey),
+            URLQueryItem(name: "q", value: "\(lat),\(lon)"),
+            URLQueryItem(name: "days", value: String(Constants.forecastDaysCount)),
+            URLQueryItem(name: "lang", value: "ru"),
+        ]
+        guard let url = urlComponents?.url else {
             completion(.failure(NSError(domain: "Invalid URL", code: 1)))
             return
         }

@@ -7,18 +7,6 @@
 
 import UIKit
 
-enum WeatherViewConstants {
-    static let forecastDaysCount: Int = 7
-    static let forecastDayCellHeight: CGFloat = 50
-    static let forecastHourCellHeight: CGFloat = 100
-    static let forecastHourCellWidth: CGFloat = 60
-    static let hourlyCollectionViewHeight: CGFloat = 120
-    static let paddingS: CGFloat = 16
-    static let paddingM: CGFloat = 24
-    static let paddingL: CGFloat = 32
-    static let horizontalInsetsS: UIEdgeInsets = .init(top: 0, left: 16, bottom: 0, right: 16)
-}
-
 final class WeatherViewController: UIViewController {
     
     // MARK: - Properties
@@ -68,12 +56,12 @@ final class WeatherViewController: UIViewController {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 16
-        layout.sectionInset = WeatherViewConstants.horizontalInsetsS
+        layout.sectionInset = Constants.horizontalInsetsS
 
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.showsHorizontalScrollIndicator = false
-        collectionView.backgroundColor = .systemGray.withAlphaComponent(0.5)
+        collectionView.backgroundColor = .systemGray.withAlphaComponent(0.3)
         collectionView.layer.cornerRadius = 8
         return collectionView
     }()
@@ -83,9 +71,9 @@ final class WeatherViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.isScrollEnabled = false
         tableView.allowsSelection = false
-        tableView.backgroundColor = .systemGray.withAlphaComponent(0.5)
+        tableView.backgroundColor = .systemGray.withAlphaComponent(0.3)
         tableView.layer.cornerRadius = 8
-        tableView.separatorInset = WeatherViewConstants.horizontalInsetsS
+        tableView.separatorInset = Constants.horizontalInsetsS
         return tableView
     }()
     
@@ -183,13 +171,13 @@ final class WeatherViewController: UIViewController {
         }
         NSLayoutConstraint.activate([
             locationLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            locationLabel.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: WeatherViewConstants.paddingL),
+            locationLabel.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: Constants.paddingL),
             
             tempLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            tempLabel.topAnchor.constraint(equalTo: locationLabel.bottomAnchor, constant: WeatherViewConstants.paddingS),
+            tempLabel.topAnchor.constraint(equalTo: locationLabel.bottomAnchor, constant: Constants.paddingS),
             
             conditionLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            conditionLabel.topAnchor.constraint(equalTo: tempLabel.bottomAnchor, constant: WeatherViewConstants.paddingS),
+            conditionLabel.topAnchor.constraint(equalTo: tempLabel.bottomAnchor, constant: Constants.paddingS),
         ])
     }
     
@@ -199,10 +187,10 @@ final class WeatherViewController: UIViewController {
         hourlyCollectionView.register(HourlyForecastCell.self, forCellWithReuseIdentifier: HourlyForecastCell.identifier)
         contentView.addSubview(hourlyCollectionView)
         NSLayoutConstraint.activate([
-            hourlyCollectionView.topAnchor.constraint(equalTo: conditionLabel.bottomAnchor, constant: WeatherViewConstants.paddingS),
-            hourlyCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: WeatherViewConstants.paddingM),
-            hourlyCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -WeatherViewConstants.paddingM),
-            hourlyCollectionView.heightAnchor.constraint(equalToConstant: WeatherViewConstants.hourlyCollectionViewHeight)
+            hourlyCollectionView.topAnchor.constraint(equalTo: conditionLabel.bottomAnchor, constant: Constants.paddingS),
+            hourlyCollectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.paddingM),
+            hourlyCollectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.paddingM),
+            hourlyCollectionView.heightAnchor.constraint(equalToConstant: Constants.hourlyCollectionViewHeight)
         ])
     }
 
@@ -212,12 +200,12 @@ final class WeatherViewController: UIViewController {
         dailyTableView.register(DailyForecastCell.self, forCellReuseIdentifier: DailyForecastCell.identifier)
         contentView.addSubview(dailyTableView)
         NSLayoutConstraint.activate([
-            dailyTableView.topAnchor.constraint(equalTo: hourlyCollectionView.bottomAnchor, constant: WeatherViewConstants.paddingL),
-            dailyTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: WeatherViewConstants.paddingM),
-            dailyTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -WeatherViewConstants.paddingM),
+            dailyTableView.topAnchor.constraint(equalTo: hourlyCollectionView.bottomAnchor, constant: Constants.paddingL),
+            dailyTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.paddingM),
+            dailyTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.paddingM),
             dailyTableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             dailyTableView.heightAnchor.constraint(
-                equalToConstant: WeatherViewConstants.forecastDayCellHeight * CGFloat(WeatherViewConstants.forecastDaysCount))
+                equalToConstant: Constants.forecastDayCellHeight * CGFloat(Constants.forecastDaysCount))
         ])
     }
 
@@ -250,8 +238,8 @@ extension WeatherViewController: UICollectionViewDataSource, UICollectionViewDel
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(
-            width: WeatherViewConstants.forecastHourCellWidth,
-            height: WeatherViewConstants.forecastHourCellHeight
+            width: Constants.forecastHourCellWidth,
+            height: Constants.forecastHourCellHeight
         )
     }
 }
@@ -259,7 +247,7 @@ extension WeatherViewController: UICollectionViewDataSource, UICollectionViewDel
 extension WeatherViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return WeatherViewConstants.forecastDaysCount
+        return Constants.forecastDaysCount
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -272,6 +260,6 @@ extension WeatherViewController: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return WeatherViewConstants.forecastDayCellHeight
+        return Constants.forecastDayCellHeight
     }
 }
