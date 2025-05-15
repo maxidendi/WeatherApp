@@ -107,7 +107,7 @@ extension WeatherViewModel: CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("Error updating location: \(error.localizedDescription)")
+        fetchWeather()
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
