@@ -12,6 +12,17 @@ final class WeatherViewController: UIViewController {
     // MARK: - Properties
 
     private let viewModel: WeatherViewModel
+    private lazy var backgroundView: UIView = {
+        let backgroundView = UIView()
+        backgroundView.contentMode = .scaleAspectFill
+        let gradient = CAGradientLayer()
+        gradient.frame = view.bounds
+        gradient.colors = [UIColor.systemCyan.cgColor, UIColor.systemMint.cgColor]
+        gradient.locations = [0, 1]
+        backgroundView.layer.insertSublayer(gradient, at: 0)
+        return backgroundView
+    } ()
+    
     private lazy var headerView: HeaderView = {
         let headerView = HeaderView()
         headerView.translatesAutoresizingMaskIntoConstraints = false
@@ -58,7 +69,7 @@ final class WeatherViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.showsHorizontalScrollIndicator = false
-        collectionView.backgroundColor = .systemGray.withAlphaComponent(0.3)
+        collectionView.backgroundColor = .systemGray.withAlphaComponent(0.2)
         collectionView.layer.cornerRadius = 8
         return collectionView
     }()
@@ -68,7 +79,7 @@ final class WeatherViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.isScrollEnabled = false
         tableView.allowsSelection = false
-        tableView.backgroundColor = .systemGray.withAlphaComponent(0.3)
+        tableView.backgroundColor = .systemGray.withAlphaComponent(0.2)
         tableView.layer.cornerRadius = 8
         tableView.separatorInset = Constants.horizontalInsetsS
         return tableView
@@ -93,6 +104,12 @@ final class WeatherViewController: UIViewController {
         bind()
         setupUI()
         viewModel.checkLocationAuthorization()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        guard let gradient = backgroundView.layer.sublayers?.first as? CAGradientLayer else { return }
+        gradient.frame = view.bounds
     }
 
     // MARK: - Methods
@@ -137,6 +154,33 @@ final class WeatherViewController: UIViewController {
         }
     }
     
+    private func updateGradient(for condition: String?) {
+        guard let gradientLayer = backgroundView.layer.sublayers?.first as? CAGradientLayer else { return }
+        
+        let colors: [CGColor]
+        switch condition?.lowercased() {
+        case "sunny", "clear", "ясно", "солнечно":
+            colors = [UIColor.systemYellow.cgColor, UIColor.systemBlue.cgColor]
+        case "cloudy", "overcast", "облачно", "пасмурно":
+            colors = [UIColor.systemGray.cgColor, UIColor.systemGray2.cgColor]
+        case "rain", "shower", "дождь", "местами дождь", "небольшой ливневый дождь":
+            colors = [UIColor.systemBlue.cgColor, UIColor.systemGray.cgColor]
+        case "partly cloudy", "переменная облачность", "дымка":
+            colors = [UIColor.systemBlue.cgColor, UIColor.systemGray.cgColor]
+        default:
+            colors = [UIColor.systemBlue.cgColor, UIColor.systemIndigo.cgColor]
+        }
+        gradientLayer.colors = colors
+        
+        let colorAnimation = CABasicAnimation(keyPath: "colors")
+        colorAnimation.fromValue = colors
+        colorAnimation.toValue = colors.reversed()
+        colorAnimation.duration = 5.0
+        colorAnimation.autoreverses = true
+        colorAnimation.repeatCount = .infinity
+        gradientLayer.add(colorAnimation, forKey: "colorAnimation")
+    }
+    
     private func setupUI() {
         setupScrollView()
         setupHeader()
@@ -145,13 +189,17 @@ final class WeatherViewController: UIViewController {
     }
     
     private func setupScrollView() {
-        [scrollView, activityIndicator].forEach {
+        [backgroundView, scrollView, activityIndicator].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
-        view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         NSLayoutConstraint.activate([
+            backgroundView.topAnchor.constraint(equalTo: view.topAnchor),
+            backgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backgroundView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            backgroundView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             
@@ -206,6 +254,7 @@ final class WeatherViewController: UIViewController {
     }
 
     private func updateUI(with weatherData: WeatherResponse ) {
+        updateGradient(for: weatherData.current.condition.text)
         headerView.configure(with: weatherData)
         hourlyCollectionView.reloadData()
         dailyTableView.reloadData()
