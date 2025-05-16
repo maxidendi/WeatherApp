@@ -13,8 +13,8 @@ enum Constants {
     static let dateFormatter = DateFormatter()
     static let defaultCityCoordinates: (lat: Double, long: Double) = (55.752, 37.616)
     
-    static let forecastDaysCount: Int = 7
-    static let forecastDayCellHeight: CGFloat = 50
+    static let forecastDaysCount: Int = 5
+    static let forecastDayCellHeight: CGFloat = 100
     static let forecastHourCellHeight: CGFloat = 100
     static let forecastHourCellWidth: CGFloat = 60
     static let hourlyCollectionViewHeight: CGFloat = 120

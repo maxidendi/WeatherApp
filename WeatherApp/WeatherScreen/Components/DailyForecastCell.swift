@@ -17,13 +17,28 @@ final class DailyForecastCell: UITableViewCell {
     private lazy var dayLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
+        label.numberOfLines = 2
         label.textColor = .label
         return label
     } ()
     
-    private lazy var rangeLabel: UILabel = {
+    private lazy var tempLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.textColor = .label
+        return label
+    } ()
+    
+    private lazy var humidityLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
+        label.textColor = .label
+        return label
+    } ()
+    
+    private lazy var windLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
         label.textColor = .label
         return label
     } ()
@@ -51,34 +66,44 @@ final class DailyForecastCell: UITableViewCell {
         super.prepareForReuse()
         iconImageView.kf.cancelDownloadTask()
         dayLabel.text = nil
-        rangeLabel.text = nil
+        tempLabel.text = nil
         iconImageView.image = nil
     }
 
     func configure(with forecast: DayForecast?) {
         guard let forecast else { return }
-        dayLabel.text = String.formatDateString(forecast.date)
-        rangeLabel.text = "\(forecast.day.mintempC)° / \(forecast.day.maxtempC)°"
+        dayLabel.text = "\(forecast.day.condition.text)\n\(String.formatDateString(forecast.date) ?? "")"
+        humidityLabel.text = "Влажность: \(forecast.day.avghumidity)%"
+        windLabel.text = "Ветер: \(forecast.day.maxwindKph) км/ч"
+        tempLabel.text = "\(forecast.day.avgtempC)°C"
         loadIcon(from: forecast.day.condition.icon)
     }
     
     private func setupUI() {
         backgroundColor = .clear
-        [dayLabel, iconImageView, rangeLabel].forEach {
+        [dayLabel, iconImageView, tempLabel, windLabel, humidityLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             addSubview($0)
         }
         NSLayoutConstraint.activate([
-            dayLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            dayLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
+            dayLabel.topAnchor.constraint(equalTo: topAnchor, constant: Constants.paddingS),
+            dayLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constants.paddingS),
+            dayLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 150),
+            dayLabel.heightAnchor.constraint(equalToConstant: 40),
+            
+            tempLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Constants.paddingS),
+            tempLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Constants.paddingS),
             
             iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
             iconImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            iconImageView.widthAnchor.constraint(equalToConstant: 40),
-            iconImageView.heightAnchor.constraint(equalToConstant: 40),
+            iconImageView.widthAnchor.constraint(equalToConstant: 60),
+            iconImageView.heightAnchor.constraint(equalToConstant: 60),
             
-            rangeLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            rangeLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24)
+            windLabel.centerYAnchor.constraint(equalTo: dayLabel.centerYAnchor),
+            windLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.paddingS),
+            
+            humidityLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.paddingS),
+            humidityLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Constants.paddingS)
         ])
     }
 
